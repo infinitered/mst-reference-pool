@@ -6,7 +6,7 @@
 defaults: &defaults
   docker:
     # Choose the version of Node you want here
-    - image: circleci/node:10.11
+    - image: circleci/node:14.17
   working_directory: ~/repo
 
 version: 2
@@ -61,7 +61,7 @@ jobs:
       # Run semantic-release after all the above is set.
       - run:
           name: Publish to NPM
-          command: yarn publish # this will be added to your package.json scripts
+          command: yarn ci:publish # this will be added to your package.json scripts
 
 workflows:
   version: 2
