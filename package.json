@@ -1,0 +1,16 @@
+{
+  "name": "mst-reference-pool",
+  "version": "0.0.1",
+  "description": "MobX-State-Tree extension to create reference pools",
+  "main": "build/index.js",
+  "repository": "https://github.com/infinitered/mst-reference-pool",
+  "author": "Jamon Holmgren",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "build": "tsc -p ."
+  },
+  "devDependencies": {
+    "typescript": "^4.4.4"
+  }
+}
