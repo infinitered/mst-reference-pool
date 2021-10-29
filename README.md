@@ -1,12 +1,12 @@
 # MST Reference Pool
 
-`mst-reference-pool` is a [MobX-State-Tree](https://mobx-state-tree.js.org) extension that allows you to use references to model instances everywhere.
+`mst-reference-pool` is a [MobX-State-Tree](https://mobx-state-tree.js.org) extension that allows you to use references to a pool of model instances in any store.
 
 Think of it like a hidden `types.array` that you can point references to, plus a garbage collector to get rid of any instances that nothing is referencing anymore.
 
 ## When would you use mst-reference-pool?
 
-Whenever you have an array of instances and also have other references to those instances, `mst-reference-pool` becomes a good option.
+Whenever you have a frequently-changing array of instances and also have other references to those instances, `mst-reference-pool` becomes a good option.
 
 Let's look at an example ... say, an Instagram-like app. There's a feed of posts and also an optional `currentPost`.
 
