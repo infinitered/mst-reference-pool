@@ -1,3 +1,1 @@
-export function getHello(): string {
-  return "Hello";
-}
+export * from "./with-pool"

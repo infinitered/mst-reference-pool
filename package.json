@@ -7,10 +7,21 @@
   "author": "Jamon Holmgren",
   "license": "MIT",
   "private": false,
+  "files": [
+    "build"
+  ],
+  "types": "build/index.d.ts",
   "scripts": {
     "build": "tsc -p ."
   },
   "devDependencies": {
     "typescript": "^4.4.4"
+  },
+  "peerDependencies": {
+    "mobx": "^6.3.5",
+    "mobx-state-tree": "^5.0.4"
+  },
+  "prettier": {
+    "semi": false
   }
 }

@@ -2,6 +2,16 @@
 # yarn lockfile v1
 
 
+mobx-state-tree@^5.0.4:
+  version "5.0.4"
+  resolved "https://registry.yarnpkg.com/mobx-state-tree/-/mobx-state-tree-5.0.4.tgz#b2628436915f5eba125cc9d2bc8bc3ad58b8762c"
+  integrity sha512-YJnjW4hy5+kcbZdRJAmqK2HrRYl2Xjh66dVRlNRBknJiNHzYvQ5qKFp096jXlP/0XWu5T3yn5JBgnLeGbGTVKA==
+
+mobx@^6.3.5:
+  version "6.3.5"
+  resolved "https://registry.yarnpkg.com/mobx/-/mobx-6.3.5.tgz#4464565bf2fa0f74f5dc2e4d6a9713bcee0ddf9c"
+  integrity sha512-MeDfqtiSbhVoJgXqQsrJwvq2klj7Xk9pPdMThCdFiwFt33vgWJe82ATppPwVzQoz0AI3QpSSwQzcp3TBDK4syg==
+
 typescript@^4.4.4:
   version "4.4.4"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.4.4.tgz#2cd01a1a1f160704d3101fd5a58ff0f9fcb8030c"
