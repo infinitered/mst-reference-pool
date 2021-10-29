@@ -1,6 +1,6 @@
 {
   "name": "mst-reference-pool",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "MobX-State-Tree extension to create reference pools",
   "main": "build/index.js",
   "repository": "https://github.com/infinitered/mst-reference-pool",
@@ -14,7 +14,7 @@
   "scripts": {
     "build": "tsc -p .",
     "test": "jest",
-    "publish": "semantic-release"
+    "ci:publish": "semantic-release"
   },
   "devDependencies": {
     "@semantic-release/git": "^10.0.0",
