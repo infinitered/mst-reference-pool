@@ -41,7 +41,7 @@ Taking our Instagram-like app above, let's convert it to use a reference pool.
 
 ```diff
 import { types } from "mobx-state-tree"
-import { withReferencePool } from "mst-reference-pool"
++import { withReferencePool } from "mst-reference-pool"
 import { PostModel } from "./post"
 
 const RootStore = types
