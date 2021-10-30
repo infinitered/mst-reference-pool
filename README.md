@@ -39,25 +39,25 @@ This is where `mst-reference-pool` shines!
 
 Taking our Instagram-like app above, let's convert it to use a reference pool.
 
-```ts
+```diff
 import { types } from "mobx-state-tree"
 import { withReferencePool } from "mst-reference-pool"
 import { PostModel } from "./post"
 
 const RootStore = types
   .model("RootStore", {
-    pool: types.array(PostModel),
++   pool: types.array(PostModel),
     feed: types.array(types.reference(PostModel)),
     currentPost: types.maybe(types.reference(PostModel)),
   })
-  .extend(withReferencePool(PostModel))
++ .extend(withReferencePool(PostModel))
   .actions((store) => ({
     setFeed(newPosts) {
-      const posts = store.addAllToPool(newPosts)
++     const posts = store.addAllToPool(newPosts)
       store.feed = posts
     },
     setCurrentPost(newPost) {
-      const post = store.addToPool(newPost)
++     const post = store.addToPool(newPost)
       store.currentPost = post
     },
   }))
