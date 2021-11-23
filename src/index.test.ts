@@ -1,5 +1,5 @@
 import { Instance, types } from "mobx-state-tree"
-import { withReferencePool } from "./with-reference-pool"
+import { withReferencePool } from "./index"
 
 const TodoModel = types.model("TodoModel", {
   id: types.identifier,
