@@ -44,6 +44,9 @@ jobs:
           name: Change Permissions
           command: sudo chown -R $(whoami) /usr/local
       - run:
+          name: Build
+          command: yarn build
+      - run:
           name: Run tests
           command: yarn test # this command will be added to/found in your package.json scripts
 
@@ -60,8 +63,11 @@ jobs:
             - v1-dependencies-
       # Run semantic-release after all the above is set.
       - run:
+          name: Build
+          command: yarn build
+      - run:
           name: Publish to NPM
-          command: yarn ci:publish # this will be added to your package.json scripts
+          command: yarn ci:publish
 
 workflows:
   version: 2
