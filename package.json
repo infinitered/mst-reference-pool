@@ -2,17 +2,22 @@
   "name": "mst-reference-pool",
   "version": "0.1.5",
   "description": "MobX-State-Tree extension to create reference pools",
-  "main": "build/index.js",
+  "main": "build/cjs/index.js",
+  "module": "build/es2020/index.js",
+  "types": "build/es2020/index.d.ts",
+  "files": [
+    "build",
+    "README.md"
+  ],
   "repository": "https://github.com/infinitered/mst-reference-pool",
   "author": "Jamon Holmgren",
   "license": "MIT",
   "private": false,
-  "files": [
-    "build"
-  ],
-  "types": "build/index.d.ts",
   "scripts": {
-    "build": "tsc -p .",
+    "build": "yarn build:clean && yarn build:cjs && yarn build:es2020",
+    "build:clean": "rimraf ./build",
+    "build:cjs": "tsc -p . --module commonjs --target es5 --outDir ./build/cjs",
+    "build:es2020": "tsc -p . --module es2020 --target es2020 --outDir ./build/es2020",
     "test": "jest",
     "ci:publish": "semantic-release"
   },
@@ -22,6 +27,7 @@
     "jest": "^27.3.1",
     "mobx": "^6.3.5",
     "mobx-state-tree": "^5.0.4",
+    "rimraf": "^3.0.2",
     "semantic-release": "^18.0.0",
     "ts-jest": "^27.0.7",
     "typescript": "^4.4.4"
@@ -31,7 +37,8 @@
     "mobx-state-tree": ">=3.0.0"
   },
   "prettier": {
-    "semi": false
+    "semi": false,
+    "printWidth": 120
   },
   "release": {
     "branches": [
