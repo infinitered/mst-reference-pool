@@ -1,6 +1,6 @@
 {
   "name": "mst-reference-pool",
-  "version": "0.1.6",
+  "version": "0.2.0",
   "description": "MobX-State-Tree extension to create reference pools",
   "main": "build/cjs/index.js",
   "module": "build/es2020/index.js",
