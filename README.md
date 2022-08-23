@@ -21,7 +21,7 @@ const RootStore = types
   })
   .actions((store) => ({
     setFeed(newPosts) {
-      store.feed = newPosts
+      store.feed.replace(newPosts)
     },
     setCurrentPost(newPost) {
       store.currentPost = newPost
@@ -54,7 +54,7 @@ const RootStore = types
   .actions((store) => ({
     setFeed(newPosts) {
 +     const posts = store.addAllToPool(newPosts)
-      store.feed = posts
+      store.feed.replace(posts)
     },
     setCurrentPost(newPost) {
 +     const post = store.addToPool(newPost)
@@ -99,7 +99,7 @@ I recommend mainly doing it after a refresh.
 .actions((store) => ({
   setFeed(newPosts) {
     const posts = store.addAllToPool(newPosts)
-    store.feed = posts
+    store.feed.replace(posts)
     store.gc()
   },
 }))
