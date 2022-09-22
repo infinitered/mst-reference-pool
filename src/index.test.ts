@@ -1,10 +1,16 @@
 import { Instance, types } from "mobx-state-tree"
 import { withReferencePool } from "./index"
 
-const TodoModel = types.model("TodoModel", {
-  id: types.identifier,
-  title: types.string,
-})
+const TodoModel = types
+  .model("TodoModel", {
+    id: types.identifier,
+    title: types.string,
+  })
+  .actions((self) => ({
+    setTitle(title: string) {
+      self.title = title
+    },
+  }))
 
 type TodoType = Instance<typeof TodoModel>
 export interface Todo extends TodoType {}
@@ -23,6 +29,9 @@ const MyStore = types
     },
   }))
   .actions((store) => ({
+    addManyTodos(titles: string[]) {
+      store.todos.replace(store.addAllToPool(titles.map((title) => ({ id: title, title }))))
+    },
     addTodo(title: string) {
       const newTodo = store.addToPool({ id: title, title })
       store.todos.push(newTodo)
@@ -106,4 +115,17 @@ test("add todo", () => {
   expect(myStore.todos.length).toBe(0)
   expect(myStore.pool.length).toBe(0) // now 0 because the GC ran
   expect(myStore.currentTodo).toBeUndefined()
+
+  // Add many todos
+  myStore.addManyTodos(["Hello", "World", "Foo", "Bar"])
+
+  // The pool has four todos
+  expect(myStore.todos.length).toBe(4)
+  expect(myStore.pool.length).toBe(4)
+
+  // the first todo title is "Hello"
+  expect(myStore.todos[0].title).toBe("Hello")
+
+  // the third todo title is "Foo"
+  expect(myStore.todos[2].title).toBe("Foo")
 })

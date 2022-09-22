@@ -7,6 +7,7 @@ import {
   IReferenceType,
   IStateTreeNode,
   IAnyComplexType,
+  SnapshotIn,
 } from "mobx-state-tree"
 
 export type WithPoolStore<ObjectType> = IStateTreeNode & {
@@ -23,7 +24,7 @@ function _withReferencePool<ModelType extends IAnyComplexType, InstanceType = In
 ) {
   return {
     actions: {
-      addToPool(object: InstanceType): InstanceType {
+      addToPool(object: SnapshotIn<InstanceType>): InstanceType {
         if (store.pool.length === 0) {
           // If the cache is empty, we don't need to check if this already exists
           store.pool.push(object)
@@ -41,7 +42,7 @@ function _withReferencePool<ModelType extends IAnyComplexType, InstanceType = In
         const id = getType(store.pool[0]).identifierAttribute || "id"
         return store.pool.find((c) => c[id] === (object as any)[id]) as InstanceType
       },
-      addAllToPool(objects: InstanceType[]): InstanceType[] {
+      addAllToPool(objects: SnapshotIn<InstanceType>[]): InstanceType[] {
         return objects.map(this.addToPool)
       },
       poolGC(references: PoolGCReferencesList<ModelType, InstanceType>[]) {
