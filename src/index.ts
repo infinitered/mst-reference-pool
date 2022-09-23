@@ -6,21 +6,23 @@ import {
   Instance,
   IReferenceType,
   IStateTreeNode,
-  IAnyComplexType,
+  IAnyModelType,
   SnapshotIn,
+  resolveIdentifier,
 } from "mobx-state-tree"
 
 export type WithPoolStore<ObjectType> = IStateTreeNode & {
   pool: IObservableArray<ObjectType>
 }
 
-export type PoolGCReferencesList<ModelType extends IAnyComplexType, InstanceType> =
+export type PoolGCReferencesList<ModelType extends IAnyModelType, InstanceType> =
   | IMSTArray<IReferenceType<ModelType>>
   | InstanceType
   | undefined
 
-function _withReferencePool<ModelType extends IAnyComplexType, InstanceType = Instance<ModelType>>(
-  store: WithPoolStore<InstanceType>
+function _withReferencePool<ModelType extends IAnyModelType, InstanceType = Instance<ModelType>>(
+  store: WithPoolStore<InstanceType>,
+  model: ModelType
 ) {
   return {
     actions: {
@@ -28,21 +30,30 @@ function _withReferencePool<ModelType extends IAnyComplexType, InstanceType = In
         if (store.pool.length === 0) {
           // If the cache is empty, we don't need to check if this already exists
           store.pool.push(object)
-        } else {
-          // What is the identifier key? (usually, but not always, `id`)
-          const id = getType(store.pool[0]).identifierAttribute || "id"
-          const existing = store.pool.find((c) => c[id] === object[id])
-          if (existing) {
-            applySnapshot(existing, object)
-          } else {
-            store.pool.push(object)
-          }
+          // We know where it lives -- first element now
+          return store.pool[0]
         }
-        // Get the identifier key again, in case this was the first cache object
-        const id = getType(store.pool[0]).identifierAttribute || "id"
-        return store.pool.find((c) => c[id] === (object as any)[id]) as InstanceType
+
+        // What is the identifier key? (usually, but not always, `id`)
+        const idKey = getType(store.pool[0]).identifierAttribute || "id"
+        const id = object[idKey]
+
+        // Does this exist already?
+        let existing = resolveIdentifier(model, store.pool, id)
+        if (existing) {
+          applySnapshot(existing, object)
+        } else {
+          // Nope -- add it
+          store.pool.push(object)
+
+          // We know where it lives -- last element now
+          existing = store.pool[store.pool.length - 1]
+        }
+
+        return existing
       },
       addAllToPool(objects: SnapshotIn<InstanceType>[]): InstanceType[] {
+        // TODO: optimize this, as it's quite wasteful now
         return objects.map(this.addToPool)
       },
       poolGC(references: PoolGCReferencesList<ModelType, InstanceType>[]) {
@@ -68,6 +79,6 @@ function _withReferencePool<ModelType extends IAnyComplexType, InstanceType = In
 
 // This function allows us to pass in a model and infer the model type from it
 // so we don't have to pass in the model type as a generic parameter
-export function withReferencePool<ModelType extends IAnyComplexType>(_model: ModelType) {
-  return (store: WithPoolStore<Instance<ModelType>>) => _withReferencePool<ModelType>(store)
+export function withReferencePool<ModelType extends IAnyModelType>(model: ModelType) {
+  return (store: WithPoolStore<Instance<ModelType>>) => _withReferencePool<ModelType>(store, model)
 }
