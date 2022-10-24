@@ -85,7 +85,9 @@ Add this action to your model, and pass into `poolGC` any property where these p
       store.currentPost,
       // perhaps some other store as well?
       // search results is a common one
-      store.searchStore.filteredPosts
+      store.searchStore.filteredPosts,
+      // for nested references, you can spread a map, like so:
+      ...store.categories.map(cat => cat.posts)
     ])
   }
 }))
