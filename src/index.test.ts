@@ -12,6 +12,12 @@ const TodoModel = types
     },
   }))
 
+// todo references can also be contained in lists
+const ListModel = types.model("ListModel", {
+  id: types.identifier,
+  todos: types.array(types.reference(TodoModel)),
+})
+
 type TodoType = Instance<typeof TodoModel>
 export interface Todo extends TodoType {}
 
@@ -21,6 +27,7 @@ const MyStore = types
     todos: types.array(types.reference(TodoModel)),
     currentTodo: types.maybe(types.reference(TodoModel)),
     counter: types.number,
+    lists: types.array(ListModel),
   })
   .extend(withReferencePool(TodoModel))
   .actions((store) => ({
@@ -30,11 +37,15 @@ const MyStore = types
   }))
   .actions((store) => ({
     addManyTodos(titles: string[]) {
-      store.todos.replace(store.addAllToPool(titles.map((title) => ({ id: title, title }))))
+      store.todos.push(...store.addAllToPool(titles.map((title) => ({ id: title, title }))))
     },
     addTodo(title: string) {
       const newTodo = store.addToPool({ id: title, title })
       store.todos.push(newTodo)
+    },
+    addList(id: string, todos: Todo[]) {
+      const newLength = store.lists.push({ id, todos: [] })
+      store.lists[newLength - 1].todos.replace(todos)
     },
     setCurrentTodo(todo: Todo) {
       store.currentTodo = todo
@@ -128,4 +139,30 @@ test("add todo", () => {
 
   // the third todo title is "Foo"
   expect(myStore.todos[2].title).toBe("Foo")
+
+  // Now add some more todos, and add those to lists
+  myStore.addManyTodos(["Sub Todo 1", "Sub Todo 2", "Sub Todo 3"])
+  const latestTodos = myStore.todos.slice(-3)
+
+  myStore.addList("Sub Todos", latestTodos)
+
+  // The pool should have seven todos
+  expect(myStore.todos.length).toBe(7)
+  expect(myStore.pool.length).toBe(7)
+
+  // The new list should have three references to todos
+  expect(myStore.lists[0].todos.length).toBe(3)
+
+  // run the gc, and it should stay at 7
+  myStore.gc()
+  expect(myStore.pool.length).toBe(7)
+
+  // now remove the references to the last 3 from the main todos, but keep them in the new list
+  myStore.removeTodo(latestTodos[0])
+  myStore.removeTodo(latestTodos[1])
+  myStore.removeTodo(latestTodos[2])
+
+  // run the gc, and it should stay at 7
+  myStore.gc()
+  expect(myStore.pool.length).toBe(7)
 })
