@@ -9,9 +9,6 @@ import {
   IAnyModelType,
   SnapshotIn,
   resolveIdentifier,
-  walk,
-  isReferenceType,
-  isType,
 } from "mobx-state-tree"
 
 export type WithPoolStore<ObjectType> = IStateTreeNode & {
@@ -61,23 +58,30 @@ function _withReferencePool<ModelType extends IAnyModelType, InstanceType = Inst
         return objects.map(this.addToPool)
       },
       poolGC(references: PoolGCReferencesList<ModelType, InstanceType>[]) {
+        // if there's nothing in the pool, no need to GC -- nope out of here
         if (store.pool.length === 0) return
-        const id = getType(store.pool[0]).identifierAttribute || "id"
+
+        // what is the id attribute? probably "id", but not always
+        const idAttribute = getType(store.pool[0]).identifierAttribute || "id"
+
+        // let's check there are any references out there pointing to each item in the pool
         store.pool.forEach((item) => {
           const referenceExists = references.some((ref) => {
-            // is an observable array?
-            if (isObservableArray(ref) && ref.some((r) => r[id] === item[id])) return true
-            // is it a regular array?
-            if (Array.isArray(ref) && ref.some((r) => r[id] === item[id])) return true
+            // is an observable array or regular array?
+            if (isObservableArray(ref) || Array.isArray(ref)) {
+              // see if it exists in the array somewhere -- if so, we need to keep it
+              if (ref.some((r) => r[idAttribute] === item[idAttribute])) return true
+            }
 
             // is a reference?
-            if (ref && ref[id] === item[id]) return true
+            if (ref && ref[idAttribute] === item[idAttribute]) return true
+
             // not here, move along
             return false
           })
-          if (!referenceExists) {
-            store.pool.remove(item)
-          }
+
+          // No references exist, so zap it
+          if (!referenceExists) store.pool.remove(item)
         })
       },
     },
