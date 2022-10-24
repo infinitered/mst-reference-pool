@@ -32,7 +32,7 @@ const MyStore = types
   .extend(withReferencePool(TodoModel))
   .actions((store) => ({
     gc() {
-      store.poolGC([store.todos, store.currentTodo])
+      store.poolGC([store.todos, store.currentTodo, ...store.lists.map((l) => l.todos)])
     },
   }))
   .actions((store) => ({

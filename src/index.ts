@@ -9,6 +9,9 @@ import {
   IAnyModelType,
   SnapshotIn,
   resolveIdentifier,
+  walk,
+  isReferenceType,
+  isType,
 } from "mobx-state-tree"
 
 export type WithPoolStore<ObjectType> = IStateTreeNode & {
@@ -17,6 +20,7 @@ export type WithPoolStore<ObjectType> = IStateTreeNode & {
 
 export type PoolGCReferencesList<ModelType extends IAnyModelType, InstanceType> =
   | IMSTArray<IReferenceType<ModelType>>
+  | Array<IReferenceType<ModelType>>
   | InstanceType
   | undefined
 
@@ -61,8 +65,11 @@ function _withReferencePool<ModelType extends IAnyModelType, InstanceType = Inst
         const id = getType(store.pool[0]).identifierAttribute || "id"
         store.pool.forEach((item) => {
           const referenceExists = references.some((ref) => {
-            // is an array?
+            // is an observable array?
             if (isObservableArray(ref) && ref.some((r) => r[id] === item[id])) return true
+            // is it a regular array?
+            if (Array.isArray(ref) && ref.some((r) => r[id] === item[id])) return true
+
             // is a reference?
             if (ref && ref[id] === item[id]) return true
             // not here, move along
