@@ -78,6 +78,7 @@ workflows:
           requires:
             - setup
       - publish:
+          context: infinitered-npm-package
           requires:
             - tests
           filters:
